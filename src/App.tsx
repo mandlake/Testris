@@ -249,6 +249,49 @@ function App() {
           }
           return { ...prev, shape: rotated };
         });
+      } else if (e.key === " ") {
+        // 🔹 하드 드롭 (Space)
+        e.preventDefault(); // 페이지 스크롤 방지
+
+        setCurrentPiece((prev) => {
+          if (!prev) return prev;
+
+          // 1) 고스트처럼 바닥까지 내리기
+          let ghost = { ...prev };
+          while (!collide(board, ghost, 0, 1)) {
+            ghost = { ...ghost, y: ghost.y + 1 };
+          }
+
+          // 2) 그 위치에 바로 고정
+          const { shape, x, y, type } = ghost;
+          const newBoard = board.map((row) => [...row]);
+
+          for (let r = 0; r < shape.length; r++) {
+            for (let c = 0; c < shape[r].length; c++) {
+              if (!shape[r][c]) continue;
+              const boardY = y + r;
+              const boardX = x + c;
+              if (boardY < 0) continue;
+              newBoard[boardY][boardX] = type;
+            }
+          }
+
+          // 3) 라인 클리어 및 점수
+          const { board: clearedBoard, lines } = clearLines(newBoard);
+          if (lines > 0) {
+            setScore((s) => s + lines * 100);
+          }
+          setBoard(clearedBoard);
+
+          // 4) 다음 블록 생성, 생성 불가면 게임 오버
+          const next = createRandomPiece();
+          if (collide(clearedBoard, next, 0, 0)) {
+            setGameOver(true);
+            return null;
+          }
+
+          return next;
+        });
       }
     };
 
