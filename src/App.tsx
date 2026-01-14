@@ -1,10 +1,16 @@
 // src/App.tsx
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import "./App.css";
 
 // 보드 크기
 const COLS = 14;
-const ROWS = 24;
+const ROWS = 20;
 
 // TGM 느낌의 레벨별 속도 테이블 (ms 단위)
 // 실제 TGM과 1:1은 아니지만, 초반 → 중반 → 후반으로 갈수록 급격히 빨라지도록 설계
@@ -133,9 +139,13 @@ function rotateMatrix(matrix: Shape): Shape {
 // 랜덤 블록 생성
 function createRandomPiece(): Piece {
   const proto = TETROMINOES[Math.floor(Math.random() * TETROMINOES.length)];
+
+  // 보드 중앙에서 2칸 왼쪽 정도에 스폰 (4X4 기준)
+  const spawnX = Math.floor(COLS / 2) - 2;
+
   return {
     shape: proto.shape.map((row) => [...row]), // 깊은 복사
-    x: 3, // 가운데 근처
+    x: spawnX,
     y: 0,
     type: proto.type,
   };
@@ -486,7 +496,16 @@ function App() {
       )}
       <div className="game">
         {/* 실제 게임 보드 랜더링 */}
-        <div className="board">
+        <div
+          className="board"
+          style={
+            {
+              // CSS 커스텀 프로퍼티로 전달
+              "--cols": COLS,
+              "--rows": ROWS,
+            } as CSSProperties
+          }
+        >
           {displayBoard.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
               <div

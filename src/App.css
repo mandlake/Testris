@@ -25,11 +25,11 @@
  * 메인 BlockDrop 보드
  * ========================= */
 
-/* 10 x 20 그리드 보드 */
+/* 그리드 보드 */
 .board {
   display: grid;
-  grid-template-columns: repeat(10, 24px);
-  grid-template-rows: repeat(20, 24px);
+  grid-template-columns: repeat(var(--cols), 24px);
+  grid-template-rows: repeat(var(--rows), 24px);
   background: #222;
   border: 2px solid #555;
 }
