@@ -88,6 +88,17 @@
   background: #0ff;
 }
 
+/* ㄷ 블록 */
+.type-8 {
+  background: #b5651d;
+}
+
+/* = 블록 */
+.type-9 {
+  background: #ffffff;
+  border: 1px solid #999;
+}
+
 /* =========================
  * 우측 사이드 패널
  * ========================= */
