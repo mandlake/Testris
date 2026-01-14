@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 // 보드 크기
-const COLS = 10;
-const ROWS = 20;
+const COLS = 14;
+const ROWS = 24;
 
 // TGM 느낌의 레벨별 속도 테이블 (ms 단위)
 // 실제 TGM과 1:1은 아니지만, 초반 → 중반 → 후반으로 갈수록 급격히 빨라지도록 설계
