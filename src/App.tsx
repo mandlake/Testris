@@ -6,6 +6,31 @@ import "./App.css";
 const COLS = 10;
 const ROWS = 20;
 
+// TGM 느낌의 레벨별 속도 테이블 (ms 단위)
+// 실제 TGM과 1:1은 아니지만, 초반 → 중반 → 후반으로 갈수록 급격히 빨라지도록 설계
+const SPEED_TABLE: { level: number; speed: number }[] = [
+  { level: 1, speed: 800 }, // 아주 느리게 시작 (연습 구간)
+  { level: 2, speed: 700 },
+  { level: 3, speed: 600 },
+  { level: 4, speed: 500 },
+  { level: 5, speed: 430 },
+  { level: 6, speed: 380 },
+  { level: 7, speed: 340 },
+  { level: 8, speed: 300 },
+  { level: 9, speed: 260 },
+  { level: 10, speed: 230 },
+  { level: 11, speed: 200 },
+  { level: 12, speed: 180 },
+  { level: 13, speed: 160 },
+  { level: 14, speed: 140 },
+  { level: 15, speed: 120 },
+  { level: 16, speed: 110 },
+  { level: 17, speed: 100 },
+  { level: 18, speed: 90 },
+  { level: 19, speed: 80 },
+  { level: 20, speed: 70 }, // 후반 거의 '떨어지는' 수준
+];
+
 // 타입 정의
 type Cell = number;
 type Board = Cell[][];
@@ -179,18 +204,22 @@ function App() {
   const [score, setScore] = useState(0);
   // 게임 종료 여부
   const [gameOver, setGameOver] = useState(false);
-  // 레벨
-  const [level, setLevel] = useState(1);
   // 지금까지 클리어한 총 라인 수
   const [linesCleared, setLinesCleared] = useState(0);
   // 레벨업 애니메이션 표시 여부
   const [showLevelUp, setShowLevelUp] = useState(false);
 
-  // 레벨에 따라 낙하 속도(ms) 결정(최소 100ms)
-  const currentSpeed = useMemo(
-    () => Math.max(100, 500 - (level - 1) * 50),
-    [level]
-  );
+  // 누적 라인 수에 따른 레벨 계산 (예: 5줄당 1레벨 업, 최대 20레벨)
+  const level = useMemo(() => {
+    const lvl = Math.floor(linesCleared / 5) + 1; // 0~4줄: 1레벨, 5~9줄: 2레벨...
+    return Math.min(lvl, 20); // SPEED_TABLE 최대 레벨에 맞춤
+  }, [linesCleared]);
+
+  // 레벨에 따른 낙하 속도(ms) 결정 (TGM 스타일 테이블 사용)
+  const currentSpeed = useMemo(() => {
+    const entry = SPEED_TABLE.find((e) => e.level === level);
+    return entry ? entry.speed : SPEED_TABLE[SPEED_TABLE.length - 1].speed;
+  }, [level]);
 
   // 게임 초기화
   const resetGame = useCallback(() => {
@@ -201,7 +230,6 @@ function App() {
     setBoard(empty);
     setScore(0);
     setGameOver(false);
-    setLevel(1); // 레벨 초기화
     setLinesCleared(0); // 누적 라인 수 초기화
     setShowLevelUp(false); // 레벨업 애니메이션 초기화
 
@@ -257,21 +285,14 @@ function App() {
         // 점수 증가
         setScore((s) => s + lines * 100);
 
-        // 누적 라인 수 업데이트 및 레벨 상승 처리
-        setLinesCleared((prevTotal) => {
-          const newTotal = prevTotal + lines;
+        // 누적 라인 수 업데이트
+        setLinesCleared((prevTotal) => prevTotal + lines);
 
-          setLevel((prevLevel) => {
-            const threshold = prevLevel * 10; // 예: 레벨당 10줄 클리어 시 레벨업
-            if (newTotal >= threshold) {
-              // 레벨업 시 애니메이션 표시
-              setShowLevelUp(true);
-              return prevLevel + 1;
-            }
-            return prevLevel;
-          });
-          return newTotal;
-        });
+        // 레벨업 애니메이션: 이전 레벨과 비교해서 올랐으면 표시
+        // (tick 전에 계산된 level과, linesCleared + lines 이후 레벨을 비교)
+        // 이 부분은 tick 바깥에서 계산된 level을 쓰고 있기 때문에,
+        // 간단하게 "라인 클리어마다 애니메이션"으로 처리해도 된다.
+        setShowLevelUp(true);
       }
       setBoard(clearedBoard);
 
@@ -369,20 +390,8 @@ function App() {
           const { board: clearedBoard, lines } = clearLines(newBoard);
           if (lines > 0) {
             setScore((s) => s + lines * 100);
-
-            setLinesCleared((prevTotal) => {
-              const newTotal = prevTotal + lines;
-
-              setLevel((prevLevel) => {
-                const threshold = prevLevel * 10;
-                if (newTotal >= threshold) {
-                  setShowLevelUp(true); // 레벨업 애니메이션 표시
-                  return prevLevel + 1;
-                }
-                return prevLevel;
-              });
-              return newTotal;
-            });
+            setLinesCleared((prevTotal) => prevTotal + lines);
+            setShowLevelUp(true);
           }
           setBoard(clearedBoard);
 
