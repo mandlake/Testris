@@ -197,7 +197,7 @@ function clearLines(board: Board): { board: Board; lines: number } {
 function getLineScore(lines: number, level: number): number {
   if (lines <= 0) return 0;
 
-  // Tetris 계열 기본 포인트 (1~4줄)
+  // BlockDropGame 계열 기본 포인트 (1~4줄)
   // 1줄: 100, 2줄: 300, 3줄: 500, 4줄: 800
   const baseTable = [0, 100, 300, 500, 800];
   const base = baseTable[lines] ?? 0;

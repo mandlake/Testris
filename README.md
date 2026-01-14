@@ -1,73 +1,150 @@
-# React + TypeScript + Vite
+# 🎮 React BlockDropGame Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite + TypeScript 기반으로 제작한 BlockDrop 게임입니다.  
+기본 조작부터 다음 블록 미리보기, 하드드롭, 레벨 시스템, 점수 배율,  
+그리고 **TGM 스타일 속도 곡선**까지 포함한 고급형 BlockDrop 구현 프로젝트입니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 데모 링크
 
-## React Compiler
+👉 **(배포 예정 – 링크 추가 예정)**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📌 주요 기능
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🎮 게임 플레이
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- 좌우 이동 / 회전 / 한 칸 내리기
+- **하드드롭 (Space)**
+- 다음 블록(Next Piece) 미리보기
+- 줄 완성 시 자동 삭제
+- 게임 오버 감지
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### ⚡ 난이도 시스템
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **무한 레벨 시스템**
+- 클리어한 줄 수에 따라 자동 레벨 상승 (5줄 = +1 레벨)
+- **TGM 스타일 속도 곡선 적용**
+- 일정 레벨 이상에서는 최대 낙하 속도로 고정
+
+### 💯 점수 시스템
+
+- 줄 × 레벨 기반 점수 공식 적용
+- 기본 점수 (레벨 적용 전)
+  - 1줄: +100
+  - 2줄: +300
+  - 3줄: +500
+  - 4줄(BlockDropGame): +800
+- 실제 점수 = _기본 점수 × 현재 레벨_
+
+### 🎉 UI / 시각화
+
+- 블록 타입별 색상 반영
+- 떨어지는 블록의 실시간 렌더링
+- **레벨업 애니메이션 오버레이 표시**
+- 좌측 보드 + 우측 패널 UI 구성
+
+---
+
+## 🛠 기술 스택
+
+| 기술            | 설명                                |
+| --------------- | ----------------------------------- |
+| **React**       | UI 렌더링 및 게임 상태 처리         |
+| **TypeScript**  | 정적 타입을 통한 안정성 확보        |
+| **Vite**        | 고속 개발 서버 & 번들러             |
+| **CSS Grid**    | BlockDrop 보드 표현                 |
+| **React Hooks** | useState / useEffect / useMemo 활용 |
+
+---
+
+## 🧱 프로젝트 구조
+
+```bash
+
+src/
+├── components/
+│ └── (UI 컴포넌트 분리 예정)
+├── logic/
+│ └── (블록/보드 로직 분리 예정)
+├── styles/
+│ └── App.css
+├── App.tsx
+└── main.tsx
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> 현재는 단일 파일(App.tsx) 중심 구조이며,  
+> 게임 로직과 UI를 컴포넌트화하는 방향으로 확장 예정입니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🎮 조작법
+
+| 키        | 기능                       |
+| --------- | -------------------------- |
+| ← / →     | 좌우 이동                  |
+| ↓         | 한 칸 내리기               |
+| ↑         | 회전                       |
+| **Space** | **하드드롭**               |
+| (자동)    | 레벨에 따른 낙하 속도 증가 |
+
+---
+
+## ⚙ 레벨 & 속도 (TGM 스타일)
+
+- **5줄 클리어 → 레벨 +1**
+- 레벨은 **제한 없이 무한 상승**
+- 속도 테이블(SPEED_TABLE)을 기준으로 점진적 가속
+- 테이블 최대치를 넘어가면 **최대 속도 유지**
+
+예시 속도 테이블:
+
+| 레벨 | 속도(ms)       |
+| ---- | -------------- |
+| 1    | 800            |
+| 5    | 430            |
+| 10   | 230            |
+| 15   | 120            |
+| 20+  | 70 (최대 속도) |
+
+---
+
+## 📊 점수 구조
+
+```bash
+
+최종 점수 = 기본 점수 × 현재 레벨
+
 ```
+
+기본 점수:
+
+| 클리어 줄 수 | 기본 점수 |
+| ------------ | --------- |
+| 1줄          | 100       |
+| 2줄          | 300       |
+| 3줄          | 500       |
+| 4줄          | 800       |
+
+레벨이 높을수록 같은 줄을 지워도 더 많은 점수를 획득할 수 있습니다.
+
+---
+
+## 📦 설치 및 실행
+
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/your-username/BlockDropGame-react.git
+cd BlockDropGame-react
+
+# 2. 패키지 설치
+npm install
+
+# 3. 개발 서버 실행
+npm run dev
+```
+
+---
