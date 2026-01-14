@@ -193,6 +193,19 @@ function clearLines(board: Board): { board: Board; lines: number } {
   return { board: newBoard, lines };
 }
 
+// 클리어한 줄 수와 레벨에 따른 점수 계산
+function getLineScore(lines: number, level: number): number {
+  if (lines <= 0) return 0;
+
+  // Tetris 계열 기본 포인트 (1~4줄)
+  // 1줄: 100, 2줄: 300, 3줄: 500, 4줄: 800
+  const baseTable = [0, 100, 300, 500, 800];
+  const base = baseTable[lines] ?? 0;
+
+  // 레벨 보너스: base * level
+  return base * level;
+}
+
 function App() {
   // 보드 상태
   const [board, setBoard] = useState<Board>(() => createEmptyBoard());
@@ -283,10 +296,14 @@ function App() {
       const { board: clearedBoard, lines } = clearLines(newBoard);
       if (lines > 0) {
         // 점수 증가
-        setScore((s) => s + lines * 100);
+        setScore((s) => s + getLineScore(lines, level));
 
-        // 누적 라인 수 업데이트
-        setLinesCleared((prevTotal) => prevTotal + lines);
+        // 누적 라인 수 / 레벨업 처리 (기존 로직 그대로 유지)
+        setLinesCleared((prevTotal) => {
+          const newTotal = prevTotal + lines;
+
+          return newTotal;
+        });
 
         // 레벨업 애니메이션: 이전 레벨과 비교해서 올랐으면 표시
         // (tick 전에 계산된 level과, linesCleared + lines 이후 레벨을 비교)
@@ -389,8 +406,16 @@ function App() {
           // 3) 라인 클리어 및 점수 추가
           const { board: clearedBoard, lines } = clearLines(newBoard);
           if (lines > 0) {
-            setScore((s) => s + lines * 100);
-            setLinesCleared((prevTotal) => prevTotal + lines);
+            // 레벨 기반 점수 증가
+            setScore((s) => s + getLineScore(lines, level));
+
+            setLinesCleared((prevTotal) => {
+              const newTotal = prevTotal + lines;
+
+              // 레벨업 처리 로직은 기존 그대로
+
+              return newTotal;
+            });
             setShowLevelUp(true);
           }
           setBoard(clearedBoard);
