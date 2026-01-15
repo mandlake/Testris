@@ -8,11 +8,7 @@ import { ScorePanel } from "./components/ScorePanel";
 import { ControlsPanel } from "./components/ControlsPanel";
 import { LevelUpOverlay } from "./components/LevelUpOverlay";
 
-import "./styles/blockDrop.css";
-import "./styles/layout.css";
-import "./styles/sidePanels.css";
-import "./styles/nextPiece.css";
-import "./styles/levelUp.css";
+import "./styles/App.css";
 
 /**
  * =========================
