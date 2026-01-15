@@ -1,5 +1,5 @@
 /**
- * src/game/types.ts
+ * src/logic/types.ts
  * 타입 정의
  */
 

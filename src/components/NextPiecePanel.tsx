@@ -1,5 +1,5 @@
 // src/components/NextPiecePanel.tsx
-import type { Piece } from "../game/types";
+import type { Piece } from "../logic/types";
 
 interface NextPiecePanelProps {
   nextPiece: Piece | null;

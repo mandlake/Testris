@@ -1,5 +1,5 @@
 // src/components/GameBoard.tsx
-import type { Board } from "../game/types";
+import type { Board } from "../logic/types";
 
 interface GameBoardProps {
   board: Board;
