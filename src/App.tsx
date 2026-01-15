@@ -1,12 +1,13 @@
 // src/App.tsx
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+
+import type { Board, Shape, Piece, PieceProto } from "./game/types";
+import { GameBoard } from "./components/GameBoard";
+import { NextPiecePanel } from "./components/NextPiecePanel";
+import { ScorePanel } from "./components/ScorePanel";
+import { ControlsPanel } from "./components/ControlsPanel";
+import { LevelUpOverlay } from "./components/LevelUpOverlay";
 
 /**
  * =========================
@@ -52,25 +53,6 @@ const SPEED_TABLE: { level: number; speed: number }[] = [
   { level: 19, speed: 80 },
   { level: 20, speed: 70 },
 ];
-
-/**
- * 타입 정의
- */
-type Cell = number;
-type Board = Cell[][];
-type Shape = number[][];
-
-interface Piece {
-  shape: Shape; // N x N 모양
-  x: number;
-  y: number;
-  type: number; // 블록 타입 (색상 구분용)
-}
-
-interface PieceProto {
-  type: number;
-  shape: Shape;
-}
 
 /**
  * 금지 테트로미노 패턴 (7개) – 4x4 기준
@@ -627,80 +609,27 @@ function App() {
 
   return (
     <div className="app">
-      {showLevelUp && (
-        <div className="level-up-overlay">
-          <div className="level-up-text">LEVEL {level}</div>
-        </div>
-      )}
+      {showLevelUp && <LevelUpOverlay level={level} />}
+
       <div className="game">
-        <div
-          className="board"
-          style={
-            {
-              "--cols": COLS,
-              "--rows": ROWS,
-            } as CSSProperties
-          }
-        >
-          {displayBoard.map((row, rowIndex) =>
-            row.map((cell, colIndex) => (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className={`cell ${cell ? "filled" : ""}`}
-                style={cell ? { backgroundColor: colors[cell] } : undefined}
-              />
-            ))
-          )}
-        </div>
+        <GameBoard
+          board={displayBoard}
+          cols={COLS}
+          rows={ROWS}
+          colors={colors}
+        />
 
         <div className="side">
-          <div className="panel">
-            <h2>점수</h2>
-            <div className="score">{score}</div>
-            <div className="level">레벨: {level}</div>
-            {gameOver && <div className="status">GAME OVER</div>}
-          </div>
+          <ScorePanel
+            score={score}
+            level={level}
+            gameOver={gameOver}
+            onReset={resetGame}
+          />
 
-          <div className="panel">
-            <h2>다음 블록</h2>
-            {nextPiece ? (
-              <div className="next-board">
-                {nextPiece.shape.map((row, rowIndex) =>
-                  row.map((cell, colIndex) => (
-                    <div
-                      key={`${rowIndex}-${colIndex}`}
-                      className={`next-cell ${cell ? "filled" : ""}`}
-                      style={
-                        cell
-                          ? {
-                              backgroundColor: colors[nextPiece.type],
-                            }
-                          : undefined
-                      }
-                    />
-                  ))
-                )}
-              </div>
-            ) : (
-              <div className="next-empty">없음</div>
-            )}
-          </div>
+          <NextPiecePanel nextPiece={nextPiece} colors={colors} />
 
-          <div className="panel">
-            <h2>조작법</h2>
-            <ul>
-              <li>← → : 좌우 이동</li>
-              <li>↓ : 한 칸 내리기</li>
-              <li>↑ : 회전</li>
-              <li>Space : 하드드롭</li>
-            </ul>
-
-            {gameOver && (
-              <button className="btn" onClick={resetGame}>
-                다시 시작
-              </button>
-            )}
-          </div>
+          <ControlsPanel />
         </div>
       </div>
     </div>
