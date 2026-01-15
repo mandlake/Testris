@@ -273,6 +273,18 @@ function App() {
     return clone;
   }, [board, currentPiece]);
 
+  // 👇 고스트 피스 계산
+  const ghostPiece: Piece | null = useMemo(() => {
+    if (!currentPiece) return null;
+
+    // 현재 보드를 기준으로, 현재 조각을 아래로 끝까지 내려본다
+    let ghost: Piece = { ...currentPiece };
+    while (!collide(board, ghost, 0, 1)) {
+      ghost = { ...ghost, y: ghost.y + 1 };
+    }
+    return ghost;
+  }, [board, currentPiece]);
+
   return (
     <div className="app">
       {showLevelUp && <LevelUpOverlay level={level} />}
@@ -287,6 +299,7 @@ function App() {
           cols={COLS}
           rows={ROWS}
           colors={colors}
+          ghostPiece={ghostPiece}
         />
 
         {/* 3: 점수 / 다음 블록 / 조작법 패널 */}

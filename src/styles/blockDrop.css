@@ -24,3 +24,9 @@
 .filled {
   border: 1px solid #111; /* 테두리 감추기용(블록끼리 붙어 보이도록) */
 }
+
+/* 👇 고스트(그림자) 블록 */
+.cell.ghost {
+  opacity: 0.5; /* 옅게 보이도록 */
+  border: 1px dashed #444; /* 살짝 다른 테두리 느낌 (선택사항) */
+}
